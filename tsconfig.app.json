@@ -2,12 +2,13 @@
     "compilerOptions": {
         "composite": true,
         "baseUrl": ".",
+        "jsx": "react-jsx",
         "paths": {
             "@/*": [
-                "./client/*"
+                "./src/*"
             ]
         }
     },
     "exclude": ["node_modules"],
-    "include": ["src"]
+    "include": ["client", "src"]
 }

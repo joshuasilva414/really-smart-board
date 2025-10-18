@@ -18,6 +18,8 @@ import { ContextHighlights } from "./components/highlights/ContextHighlights";
 import { enableLinedFillStyle } from "./enableLinedFillStyle";
 import { TargetAreaTool } from "./tools/TargetAreaTool";
 import { TargetShapeTool } from "./tools/TargetShapeTool";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
 
 /**
  * The ID used for this project's agent.
@@ -75,7 +77,13 @@ function App() {
   }, [agent]);
 
   return page === "start" ? (
-    <div>Start</div>
+        <div className="h-screen w-screen bg-zinc-900 flex flex-col justify-center items-center text-white text-2xl">
+          <div><h1 className="h-40 text-5xl font-bold">Welcome to <span className="text-blue-400">REALLY SMART BOARD</span></h1></div>
+                <div className="align-center h-60 flex flex-col align-top justify-start">
+                    <Textarea className="align-top justify-start w-300 bg-red-300 text-black" placeholder="Type your message here." id="message" />
+                    <Button className="justify-self-end  bg-blue-500 text-white"></Button>
+            </div>
+          </div>
   ) : page === "learn" ? (
     <TldrawUiToastsProvider>
       <div className="tldraw-agent-container">
