@@ -1,7 +1,7 @@
 {
 	"compilerOptions": {
 		"outDir": "./.tsbuild",
-		"types": ["@cloudflare/workers-types", "node"],
+		"types": ["@cloudflare/workers-types"],
 		"composite": true,
 		"declaration": true,
 		"declarationMap": true,
@@ -27,9 +27,23 @@
 		"strictFunctionTypes": true,
 		"strictNullChecks": true,
 		"useDefineForClassFields": true,
-		"noImplicitOverride": true
+		"noImplicitOverride": true,
+		"baseUrl": ".",
+	"paths": {
+		"@/*": [
+			"./src/*"
+		]
+	}
 	},
 	"exclude": ["node_modules"],
 	"include": ["client", "shared", "worker"],
-	"files": ["./vite.config.ts"]
+"files": [],
+"references": [
+	{
+		"path": "./tsconfig.app.json"
+	},
+	{
+		"path": "./tsconfig.node.json"
+	}
+	]
 }

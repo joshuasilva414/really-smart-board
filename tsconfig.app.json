@@ -1,0 +1,13 @@
+{
+    "compilerOptions": {
+        "composite": true,
+        "baseUrl": ".",
+        "paths": {
+            "@/*": [
+                "./client/*"
+            ]
+        }
+    },
+    "exclude": ["node_modules"],
+    "include": ["src"]
+}
