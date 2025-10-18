@@ -20,6 +20,7 @@ import { TargetAreaTool } from "./tools/TargetAreaTool";
 import { TargetShapeTool } from "./tools/TargetShapeTool";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import { Paperclip, ArrowUp } from "lucide-react";
 
 /**
  * The ID used for this project's agent.
@@ -77,13 +78,41 @@ function App() {
   }, [agent]);
 
   return page === "start" ? (
-        <div className="h-screen w-screen bg-zinc-900 flex flex-col justify-center items-center text-white text-2xl">
-          <div><h1 className="h-40 text-5xl font-bold">Welcome to <span className="text-blue-400">REALLY SMART BOARD</span></h1></div>
-                <div className="align-center h-60 flex flex-col align-top justify-start">
-                    <Textarea className="align-top justify-start w-300 bg-red-300 text-black" placeholder="Type your message here." id="message" />
-                    <Button className="justify-self-end  bg-blue-500 text-white"></Button>
-            </div>
+    <div className="flex h-screen w-screen flex-col items-center justify-end bg-zinc-900 pb-8">
+
+      {/* Welcome Text */}
+      <div className="absolute top-1/4 text-center">
+        <h1 className="text-5xl font-bold text-white">
+          Welcome to <span className="text-blue-400">REALLY SMART BOARD</span>
+        </h1>
+      </div>
+
+      {/* The input form container */}
+      <div className="fixed bottom-0 left-0 w-full bg-zinc-900/50 backdrop-blur-sm">
+        <div className="mx-auto flex w-full max-w-2xl items-center p-4">
+          <div className="relative flex w-full items-center rounded-full bg-zinc-800 p-2 shadow-lg ring-1 ring-zinc-700">
+
+            {/* Attachment Button */}
+            <button className="ml-2 flex h-10 w-10 items-center justify-center rounded-full text-zinc-400 transition-colors hover:bg-zinc-700 hover:text-white">
+              <Paperclip className="h-5 w-5" />
+            </button>
+
+            {/* Text Input */}
+            <textarea
+              className="mx-4 flex-1 resize-none self-center border-none bg-transparent text-white placeholder-zinc-400 focus:outline-none focus:ring-0"
+              placeholder="Type your message here."
+              id="message"
+              rows={1}
+            />
+
+            {/* Send Button */}
+            <button className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-500 text-white transition-colors hover:bg-blue-600 disabled:bg-zinc-600">
+              <ArrowUp className="h-5 w-5" />
+            </button>
           </div>
+        </div>
+      </div>
+    </div>
   ) : page === "learn" ? (
     <TldrawUiToastsProvider>
       <div className="tldraw-agent-container">
