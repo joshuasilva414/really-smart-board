@@ -19,7 +19,6 @@ import { enableLinedFillStyle } from "./enableLinedFillStyle";
 import { TargetAreaTool } from "./tools/TargetAreaTool";
 import { TargetShapeTool } from "./tools/TargetShapeTool";
 
-
 /**
  * The ID used for this project's agent.
  * If you want to support multiple agents, you can use a different ID for each agent.
@@ -60,7 +59,7 @@ const overrides: TLUiOverrides = {
 
 function App() {
   const [agent, setAgent] = useState<TldrawAgent | undefined>();
-  const [page, setPage] = useState<string>("voice-test");
+  const [page, setPage] = useState<string>("learn");
 
   // Custom components to visualize what the agent is doing
   const components: TLComponents = useMemo(() => {

@@ -24,25 +24,7 @@ export class AgentDurableObject extends DurableObject<Environment> {
     },
   })
     .post("/stream", (request) => this.stream(request))
-    // .post("/tts", (request) => this.streamTTS(request))
     .post("/transcribe", (request) => this.transcribe(request));
-  // `fetch` is the entry point for all requests to the Durable Object
-  override fetch(request: Request): Response | Promise<Response> {
-    return this.router.fetch(request);
-  }
-
-  // private async streamTTS(request: Request): Promise<Response> {
-  //   const encoder = new TextEncoder();
-  //   const { readable, writable } = new TransformStream();
-  //   const writer = writable.getWriter();
-
-  //   const response: { changes: Streaming<AgentAction>[] } = { changes: [] };
-	// (async () => {
-	// 	try {
-			
-	// 	}
-	// })();
-  // }
 
   private async transcribe(request: Request): Promise<Response> {
     // Call the ElevenLabsService to transcribe the audio

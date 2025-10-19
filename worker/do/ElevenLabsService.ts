@@ -17,44 +17,40 @@ export class ElevenLabsService {
       },
     });
   }
- async transcribe(request: Request): Promise<string> {
+  async transcribe(request: Request): Promise<string> {
     try {
       const blob = await request.blob();
-      const form = new FormData()
-     
-      form.append('file', blob, 'voice.webm')
-      form.append('model_id', 'scribe_v1')
+      const form = new FormData();
 
-<<<<<<< Updated upstream
-=======
-  private async transcribe(request: Request): Promise<string> {
-    try {
-      const blob = await request.blob()
-      const form = new FormData()
-     
-      form.append('file', blob, 'voice.webm')
-      form.append('model_id', 'scribe_v1')
+      form.append("file", blob, "voice.webm");
+      form.append("model_id", "scribe_v1");
 
->>>>>>> Stashed changes
-      const response = await fetch('https://api.elevenlabs.io/v1/speech-to-text', {
-        method: 'POST',
-        headers: {
-          'xi-api-key': this.env.ELEVENLABS_API_KEY,
-        },
-        body: form,
-      })
+      const response = await fetch(
+        "https://api.elevenlabs.io/v1/speech-to-text",
+        {
+          method: "POST",
+          headers: {
+            "xi-api-key": this.env.ELEVENLABS_API_KEY,
+          },
+          body: form,
+        }
+      );
 
       if (!response.ok) {
-        const errText = await response.text()
-        console.error('Eleven Labs transcription error:', response.status, errText)
-        return ''
+        const errText = await response.text();
+        console.error(
+          "Eleven Labs transcription error:",
+          response.status,
+          errText
+        );
+        return "";
       }
 
-  const data = (await response.json()) as { text?: string } | undefined
-  return (data && (data.text ?? '')) || ''
+      const data = (await response.json()) as { text?: string } | undefined;
+      return (data && (data.text ?? "")) || "";
     } catch (error) {
-      console.error('Eleven Labs transcription error:', error)
-      return ''
+      console.error("Eleven Labs transcription error:", error);
+      return "";
     }
   }
 }
