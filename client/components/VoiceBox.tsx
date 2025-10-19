@@ -1,71 +1,7 @@
 import { CircularWaveform } from "@pipecat-ai/voice-ui-kit";
-import { useState, useRef, useCallback } from "react";
+import { useAudioContext } from "../hooks/useAudio";
 function VoiceBox() {
-  const [audioTrack, setAudioTrack] = useState<MediaStreamTrack | null>(null);
-  const [isConnected, setIsConnected] = useState(false);
-  const [audioURL, setAudioURL] = useState<string | null>(null);
-
-  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
-  const chunksRef = useRef<Blob[]>([]);
-
-  const connectAudio = useCallback(async (): Promise<void> => {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const track = stream.getAudioTracks()[0];
-      setAudioTrack(track);
-
-      // Create recorder
-      const recorder = new MediaRecorder(stream);
-      mediaRecorderRef.current = recorder;
-      chunksRef.current = [];
-
-      recorder.ondataavailable = (e) => {
-        if (e.data.size > 0) chunksRef.current.push(e.data);
-      };
-
-      recorder.onstop = () => {
-        const blob = new Blob(chunksRef.current, { type: "audio/webm" });
-        const url = URL.createObjectURL(blob);
-        setAudioURL(url);
-        fetch("/transcribe", {
-          method: "POST",
-          body: blob,
-        });
-      };
-
-      recorder.start();
-      setIsConnected(true);
-    } catch (error) {
-      console.error("Error accessing microphone:", error);
-    }
-  }, []);
-
-  const disconnectAudio = useCallback((): void => {
-    if (
-      mediaRecorderRef.current &&
-      mediaRecorderRef.current.state !== "inactive"
-    ) {
-      mediaRecorderRef.current.stop();
-      mediaRecorderRef.current.stream
-        .getTracks()
-        .forEach((track) => track.stop());
-    }
-
-    setAudioTrack(null);
-    setIsConnected(false);
-  }, []);
-
-  const toggleAudio = useCallback(
-    async (e: React.MouseEvent): Promise<void> => {
-      e.preventDefault();
-      if (isConnected) {
-        disconnectAudio();
-      } else {
-        await connectAudio();
-      }
-    },
-    [disconnectAudio, connectAudio]
-  );
+  const { audioTrack, isConnected, toggleAudio } = useAudioContext();
 
   return (
     <div className="flex flex-col items-center">
