@@ -414,6 +414,11 @@ function convertGeoShapeToTldrawShape(
 	} else {
 		fill = convertSimpleFillToTldrawFill('none')
 	}
+	
+	// Ensure fill is never undefined
+	if (!fill) {
+		fill = 'none'
+	}
 
 	return {
 		shape: {

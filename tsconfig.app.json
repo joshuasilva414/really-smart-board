@@ -1,13 +1,22 @@
 {
+    "extends": "./tsconfig.json",
     "compilerOptions": {
         "composite": true,
         "baseUrl": ".",
+        "jsx": "react-jsx",
+        "lib": ["DOM", "DOM.Iterable", "ES2015", "ESNext"],
+        "target": "ES2015",
+        "module": "ESNext",
+        "moduleResolution": "node",
+        "esModuleInterop": true,
+        "allowSyntheticDefaultImports": true,
+        "skipLibCheck": true,
         "paths": {
             "@/*": [
-                "./client/*"
+                "./src/*"
             ]
         }
     },
     "exclude": ["node_modules"],
-    "include": ["src"]
+    "include": ["client", "src"]
 }
