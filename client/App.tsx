@@ -18,6 +18,7 @@ import { ContextHighlights } from "./components/highlights/ContextHighlights";
 import { enableLinedFillStyle } from "./enableLinedFillStyle";
 import { TargetAreaTool } from "./tools/TargetAreaTool";
 import { TargetShapeTool } from "./tools/TargetShapeTool";
+import VoiceTest from "./components/voice-test";
 
 /**
  * The ID used for this project's agent.
@@ -59,7 +60,7 @@ const overrides: TLUiOverrides = {
 
 function App() {
   const [agent, setAgent] = useState<TldrawAgent | undefined>();
-  const [page, setPage] = useState<string>("start");
+  const [page, setPage] = useState<string>("voice-test");
 
   // Custom components to visualize what the agent is doing
   const components: TLComponents = useMemo(() => {
@@ -94,6 +95,8 @@ function App() {
         </ErrorBoundary>
       </div>
     </TldrawUiToastsProvider>
+  ) : page === "voice-test" ? (
+    <VoiceTest />
   ) : (
     <div>Not found</div>
   );
