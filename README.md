@@ -1,5 +1,4 @@
 # Really Smart Board
-[![Ask DeepWiki](https://devin.ai/assets/askdeepwiki.png)](https://deepwiki.com/joshuasilva414/really-smart-board)
 
 This is an AI-powered whiteboard built using the tldraw agent starter kit. It demonstrates how to build an AI agent that can manipulate the [tldraw](https://github.com/tldraw/tldraw) canvas.
 
@@ -7,7 +6,7 @@ It features a chat panel on the right-hand-side of the screen where the user can
 
 ## Environment Setup
 
-Create a `.dev.vars` file in the root directory and add API keys for any model providers you want to use.
+Create a `.env` file in the root directory and add API keys for any model providers you want to use.
 
 ```
 ANTHROPIC_API_KEY=your_anthropic_api_key_here
