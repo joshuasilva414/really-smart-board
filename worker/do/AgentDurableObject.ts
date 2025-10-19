@@ -6,6 +6,7 @@ import { Streaming } from "../../shared/types/Streaming";
 import { Environment } from "../environment";
 import { AgentService } from "./AgentService";
 import { ElevenLabsService } from "./ElevenLabsService";
+import { streamTTS } from "worker/routes/tts";
 
 export class AgentDurableObject extends DurableObject<Environment> {
   agentService: AgentService;
@@ -24,7 +25,58 @@ export class AgentDurableObject extends DurableObject<Environment> {
     },
   })
     .post("/stream", (request) => this.stream(request))
-    .post("/transcribe", (request) => this.transcribe(request));
+    .post("/transcribe", (request) => this.transcribe(request))
+    .get("/ws/stream-tts", (request) =>
+      this.elevenLabsService.streamTTSWebSocket(request)
+    );
+
+  private async streamTTS(request: Request): Promise<Response> {
+    const encoder = new TextEncoder();
+    const { readable, writable } = new TransformStream();
+    const writer = writable.getWriter();
+
+    const response: { chunks: Streaming<EncodedAudioChunk>[] } = { chunks: [] };
+
+    (async () => {
+      try {
+        const text = (await request.text()) as string;
+
+        for await (const chunk of this.elevenLabsService.streamTTS(text)) {
+          response.chunks.push(chunk);
+          const data = `data: ${JSON.stringify(chunk)}\n\n`;
+          await writer.write(encoder.encode(data));
+          await writer.ready;
+        }
+        await writer.close();
+      } catch (error: any) {
+        console.error("Stream error:", error);
+
+        // Send error through the stream
+        const errorData = `data: ${JSON.stringify({
+          error: error.message,
+        })}\n\n`;
+        try {
+          await writer.write(encoder.encode(errorData));
+          await writer.close();
+        } catch (writeError) {
+          await writer.abort(writeError);
+        }
+      }
+    })();
+
+    return new Response(readable, {
+      headers: {
+        "Content-Type": "text/event-stream",
+        "Cache-Control": "no-cache, no-transform",
+        Connection: "keep-alive",
+        "X-Accel-Buffering": "no",
+        "Transfer-Encoding": "chunked",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "POST, OPTIONS",
+        "Access-Control-Allow-Headers": "Content-Type",
+      },
+    });
+  }
 
   private async transcribe(request: Request): Promise<Response> {
     // Call the ElevenLabsService to transcribe the audio

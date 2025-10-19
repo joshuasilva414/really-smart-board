@@ -8,8 +8,6 @@ function VoiceBox() {
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
 
-
-
   const connectAudio = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });

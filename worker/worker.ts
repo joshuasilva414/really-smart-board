@@ -4,6 +4,7 @@ import { AutoRouter, cors, error, IRequest } from "itty-router";
 import { Environment } from "./environment";
 import { stream } from "./routes/stream";
 import { transcribe } from "./routes/transcribe";
+import { streamTTS, streamTTSWebSocket } from "./routes/tts";
 
 const { preflight, corsify } = cors({ origin: "*" });
 
@@ -16,7 +17,9 @@ const router = AutoRouter<IRequest, [env: Environment, ctx: ExecutionContext]>({
   },
 })
   .post("/stream", stream)
-  .post("/transcribe", transcribe);
+  .post("/transcribe", transcribe)
+  .post("/stream-tts", streamTTS)
+  .get("/ws/stream-tts", streamTTSWebSocket);
 export default class extends WorkerEntrypoint<Environment> {
   override fetch(request: Request): Promise<Response> {
     return router.fetch(request, this.env, this.ctx);
