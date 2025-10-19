@@ -38,8 +38,30 @@ export class CreateActionUtil extends AgentActionUtil<CreateAction> {
 
 		const { shape } = action
 
+		// Validate that shape exists
+		if (!shape) {
+			console.error('CreateAction has no shape:', action)
+			return null
+		}
+
+		// Generate a default ID if none was provided
+		if (!shape.shapeId) {
+			const shapeType = shape._type || 'shape'
+			shape.shapeId = `${shapeType}-${Math.random().toString(36).substring(2, 9)}`
+			console.warn(`Shape missing ID, generated: ${shape.shapeId}`)
+		}
+
 		// Ensure the created shape has a unique ID
 		shape.shapeId = helpers.ensureShapeIdIsUnique(shape.shapeId)
+
+		// Validate draw shapes - they need proper point data
+		if (shape._type === 'draw') {
+			// Draw shapes without proper data can't be created
+			// Convert to a rectangle instead as a fallback
+			console.warn('Draw shape created without proper point data, using pen tool is recommended')
+			// Reject draw shapes for now - AI should use pen tool instead
+			return null
+		}
 
 		// If the shape is an arrow, ensure the from and to IDs are real shapes
 		if (shape._type === 'arrow') {
@@ -57,6 +79,13 @@ export class CreateActionUtil extends AgentActionUtil<CreateAction> {
 	override applyAction(action: Streaming<CreateAction>, helpers: AgentHelpers) {
 		if (!action.complete) return
 		if (!this.agent) return
+		
+		// Validate shape exists before processing
+		if (!action.shape) {
+			console.error('CreateAction.applyAction: action has no shape', action)
+			return
+		}
+		
 		const { editor } = this.agent
 
 		// Translate the shape back to the chat's position
