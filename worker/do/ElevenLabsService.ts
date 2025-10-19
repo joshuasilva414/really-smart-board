@@ -17,8 +17,33 @@ export class ElevenLabsService {
       },
     });
   }
+ async transcribe(request: Request): Promise<string> {
+    try {
+      const blob = await request.blob();
+      const form = new FormData()
+     
+      form.append('file', blob, 'voice.webm')
+      form.append('model_id', 'scribe_v1')
 
-  async transcribe(request: Request): Promise<string> {
-    return new Promise((res, req) => res(""));
+      const response = await fetch('https://api.elevenlabs.io/v1/speech-to-text', {
+        method: 'POST',
+        headers: {
+          'xi-api-key': this.env.ELEVENLABS_API_KEY,
+        },
+        body: form,
+      })
+
+      if (!response.ok) {
+        const errText = await response.text()
+        console.error('Eleven Labs transcription error:', response.status, errText)
+        return ''
+      }
+
+  const data = (await response.json()) as { text?: string } | undefined
+  return (data && (data.text ?? '')) || ''
+    } catch (error) {
+      console.error('Eleven Labs transcription error:', error)
+      return ''
+    }
   }
 }

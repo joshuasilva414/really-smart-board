@@ -18,7 +18,7 @@ import { ContextHighlights } from "./components/highlights/ContextHighlights";
 import { enableLinedFillStyle } from "./enableLinedFillStyle";
 import { TargetAreaTool } from "./tools/TargetAreaTool";
 import { TargetShapeTool } from "./tools/TargetShapeTool";
-import VoiceTest from "./components/voice-test";
+
 
 /**
  * The ID used for this project's agent.
@@ -95,8 +95,6 @@ function App() {
         </ErrorBoundary>
       </div>
     </TldrawUiToastsProvider>
-  ) : page === "voice-test" ? (
-    <VoiceTest />
   ) : (
     <div>Not found</div>
   );
