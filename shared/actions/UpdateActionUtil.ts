@@ -77,11 +77,20 @@ export class UpdateActionUtil extends AgentActionUtil<UpdateAction> {
 			throw new Error(`Shape ${shapeId} not found in canvas`)
 		}
 
-		const result = convertSimpleShapeToTldrawShape(editor, action.update, {
+			const result = convertSimpleShapeToTldrawShape(editor, action.update, {
 			defaultShape: existingShape,
 		})
 
-		editor.updateShape(result.shape)
+			// Defensive: guard against unexpected undefined conversion results
+			if (!result || !result.shape) {
+				console.error('UpdateAction.applyAction: failed to convert simple shape to tldraw shape', {
+					update: action.update,
+					shapeId,
+				})
+				return
+			}
+
+			editor.updateShape(result.shape)
 
 		// Handle arrow bindings if they exist
 		if (result.bindings) {
