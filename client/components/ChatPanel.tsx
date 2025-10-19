@@ -1,4 +1,4 @@
-import { FormEventHandler, useCallback, useRef } from 'react'
+import { FormEventHandler, useCallback, useEffect, useRef, useState } from 'react'
 import { useValue } from 'tldraw'
 import { convertTldrawShapeToSimpleShape } from '../../shared/format/convertTldrawShapeToSimpleShape'
 import { TldrawAgent } from '../agent/TldrawAgent'
@@ -9,6 +9,7 @@ import { TodoList } from './TodoList'
 export function ChatPanel({ agent }: { agent: TldrawAgent }) {
 	const { editor } = agent
 	const inputRef = useRef<HTMLTextAreaElement>(null)
+	const menuRef = useRef<HTMLDivElement>(null)
 	const modelName = useValue(agent.$modelName)
 
 	const handleSubmit = useCallback<FormEventHandler<HTMLFormElement>>(
@@ -53,15 +54,67 @@ export function ChatPanel({ agent }: { agent: TldrawAgent }) {
 		[agent, modelName, editor]
 	)
 
+	const [showMenu, setShowMenu] = useState(false)
+
+	// Close menu when clicking outside
+	useEffect(() => {
+		function handleClickOutside(event: MouseEvent) {
+			if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+				setShowMenu(false)
+			}
+		}
+
+		if (showMenu) {
+			document.addEventListener('mousedown', handleClickOutside)
+			return () => document.removeEventListener('mousedown', handleClickOutside)
+		}
+	}, [showMenu])
+
 	function handleNewChat() {
 		agent.reset()
+		setShowMenu(false)
+	}
+
+	function handleClearAllData() {
+		if (window.confirm("Are you sure you want to delete all saved data? This will clear the canvas, chat history, and all settings. This cannot be undone.")) {
+			localStorage.clear()
+			window.location.reload()
+		}
+		setShowMenu(false)
 	}
 
 	function NewChatButton() {
 		return (
-			<button className="new-chat-button" onClick={handleNewChat}>
-				+
-			</button>
+			<div className="relative" ref={menuRef}>
+				<button 
+					className="new-chat-button" 
+					onClick={() => setShowMenu(!showMenu)}
+					title="Reset chat or clear all data"
+				>
+					⋮
+				</button>
+				{showMenu && (
+					<div 
+						className="absolute top-full right-0 mt-2 bg-zinc-800 rounded-lg shadow-lg border border-zinc-700 overflow-hidden z-50"
+						style={{ minWidth: '200px' }}
+					>
+						<button
+							onClick={handleNewChat}
+							className="w-full px-4 py-3 text-left text-sm text-white hover:bg-zinc-700 transition-colors flex items-center gap-2"
+						>
+							<span>🔄</span>
+							<span>New Chat</span>
+						</button>
+						<button
+							onClick={handleClearAllData}
+							className="w-full px-4 py-3 text-left text-sm text-red-400 hover:bg-zinc-700 transition-colors flex items-center gap-2 border-t border-zinc-700"
+						>
+							<span>🗑️</span>
+							<span>Clear All Data</span>
+						</button>
+					</div>
+				)}
+			</div>
 		)
 	}
 
