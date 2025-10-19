@@ -46,8 +46,8 @@ export class AgentDurableObject extends DurableObject<Environment> {
 
   private async transcribe(request: Request): Promise<Response> {
     // Call the ElevenLabsService to transcribe the audio
-    const response = await this.elevenLabsService.transcribe(request);
-    return new Response(response as BodyInit, {
+    const text = await this.elevenLabsService.transcribe(request);
+    return new Response(text as BodyInit, {
       headers: {
         "Content-Type": "text/plain",
       },

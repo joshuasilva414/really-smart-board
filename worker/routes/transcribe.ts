@@ -2,7 +2,7 @@ import { IRequest } from "itty-router";
 import WebSocket from "ws";
 import { Environment } from "../environment";
 
-export async function tts(request: IRequest, env: Environment) {
+export async function transcribe(request: IRequest, env: Environment) {
   // eventually... use some kind of per-user id, so that each user has their own worker
   const id = env.AGENT_DURABLE_OBJECT.idFromName("anonymous");
   const DO = env.AGENT_DURABLE_OBJECT.get(id);

@@ -18,7 +18,7 @@ export class ElevenLabsService {
     });
   }
 
-  private async transcribe(request: Request): Promise<string> {
+  async transcribe(request: Request): Promise<string> {
     return new Promise((res, req) => res(""));
   }
 }
