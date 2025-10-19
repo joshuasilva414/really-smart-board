@@ -25,6 +25,17 @@ export class ElevenLabsService {
       form.append('file', blob, 'voice.webm')
       form.append('model_id', 'scribe_v1')
 
+<<<<<<< Updated upstream
+=======
+  private async transcribe(request: Request): Promise<string> {
+    try {
+      const blob = await request.blob()
+      const form = new FormData()
+     
+      form.append('file', blob, 'voice.webm')
+      form.append('model_id', 'scribe_v1')
+
+>>>>>>> Stashed changes
       const response = await fetch('https://api.elevenlabs.io/v1/speech-to-text', {
         method: 'POST',
         headers: {
