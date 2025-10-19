@@ -1,7 +1,7 @@
 {
 	"compilerOptions": {
 		"outDir": "./.tsbuild",
-		"types": ["@cloudflare/workers-types"],
+		"types": ["@cloudflare/workers-types", "node"],
 		"composite": true,
 		"declaration": true,
 		"declarationMap": true,
@@ -9,7 +9,7 @@
 		"allowSyntheticDefaultImports": true,
 		"esModuleInterop": true,
 		"forceConsistentCasingInFileNames": true,
-		"importHelpers": true,
+		"importHelpers": false,
 		"resolveJsonModule": true,
 		"incremental": true,
 		"jsx": "react-jsx",

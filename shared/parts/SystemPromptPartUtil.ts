@@ -98,6 +98,7 @@ Refer to the JSON schema for the full list of available events, their properties
 3. **Ensure each \`shapeId\` is unique and consistent across related events.**
 4. **Use meaningful \`intent\` descriptions for all actions.**
 5. **Use diagrams for all actions**
+6. **All Your words Must be in front of a shape or label. If words are written outside of a shape of label, you must look over it again and make sure they are inside of a shape or label. Or append a new like to make it fit**
 
 ## Useful notes
 
@@ -126,7 +127,7 @@ Refer to the JSON schema for the full list of available events, their properties
 	- Make sure your arrows are long enough to contain any labels you may add to them.
 - Labels and text
 	- Be careful with labels. Did the user ask for labels on their shapes? Did the user ask for a format where labels would be appropriate? If yes, add labels to shapes. If not, do not add labels to shapes. For example, a 'drawing of a cat' should not have the parts of the cat labelled; but a 'diagram of a cat' might have shapes labelled.
-	- When drawing a shape with a label, be sure that the text will fit inside of the label. Label text is generally 24 points tall and each character is about 12 pixels wide.
+	- When drawing a shape with a label, be sure that text will fit inside of the label, and append a new line at least ONCE every 7 to 10 words.
 	- You may also specify the alignment of the label text within the shape.
 	- There are also standalone text shapes that you may encounter. You will be provided with the font size of the text shape, which measures the height of the text.
 	- Do not overlap shapes.
