@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useRef } from "react";
 import {
   DefaultSizeStyle,
   ErrorBoundary,
@@ -6,7 +6,7 @@ import {
   Tldraw,
   TldrawUiToastsProvider,
   TLUiOverrides,
-  useEditor,
+  useEditor,https://github.githubassets.com/images/spinners/octocat-spinner-128.gif
 } from "tldraw";
 import { TldrawAgent } from "./agent/TldrawAgent";
 import { useTldrawAgent } from "./agent/useTldrawAgent";
@@ -18,6 +18,8 @@ import { ContextHighlights } from "./components/highlights/ContextHighlights";
 import { enableLinedFillStyle } from "./enableLinedFillStyle";
 import { TargetAreaTool } from "./tools/TargetAreaTool";
 import { TargetShapeTool } from "./tools/TargetShapeTool";
+
+import StartScreen from "./components/StartScreen";
 
 
 /**
@@ -58,9 +60,19 @@ const overrides: TLUiOverrides = {
   },
 };
 
+// Types for our app state
+interface AppState {
+  initialMessage: string;
+  uploadedFiles: File[];
+}
+
 function App() {
   const [agent, setAgent] = useState<TldrawAgent | undefined>();
-  const [page, setPage] = useState<string>("voice-test");
+  const [page, setPage] = useState<string>("start");
+  const [appState, setAppState] = useState<AppState>({
+    initialMessage: "",
+    uploadedFiles: [],
+  });
 
   // Custom components to visualize what the agent is doing
   const components: TLComponents = useMemo(() => {
@@ -75,9 +87,17 @@ function App() {
     };
   }, [agent]);
 
+  const handleStartSession = (message: string, files: File[]) => {
+    setAppState({
+      initialMessage: message,
+      uploadedFiles: files,
+    });
+    setPage("board");
+  };
+
   return page === "start" ? (
-    <div>Start</div>
-  ) : page === "learn" ? (
+    <StartScreen onStartSession={handleStartSession} />
+  ) : page === "board" ? (
     <TldrawUiToastsProvider>
       <div className="tldraw-agent-container">
         <div className="tldraw-canvas">
@@ -87,7 +107,10 @@ function App() {
             overrides={overrides}
             components={components}
           >
-            <AppInner setAgent={setAgent} />
+            <AppInner 
+              setAgent={setAgent} 
+              appState={appState}
+            />
           </Tldraw>
         </div>
         <ErrorBoundary fallback={ChatPanelFallback}>
@@ -100,9 +123,16 @@ function App() {
   );
 }
 
-function AppInner({ setAgent }: { setAgent: (agent: TldrawAgent) => void }) {
+function AppInner({ 
+  setAgent, 
+  appState 
+}: { 
+  setAgent: (agent: TldrawAgent) => void;
+  appState: AppState;
+}) {
   const editor = useEditor();
   const agent = useTldrawAgent(editor, AGENT_ID);
+  const initialPromptSentRef = useRef(false);
 
   useEffect(() => {
     if (!editor || !agent) return;
@@ -110,6 +140,30 @@ function AppInner({ setAgent }: { setAgent: (agent: TldrawAgent) => void }) {
     (window as any).editor = editor;
     (window as any).agent = agent;
   }, [agent, editor, setAgent]);
+
+  // Send the initial message and files to the agent when ready
+  useEffect(() => {
+    // Check if we've already sent the initial prompt
+    if (!agent || !editor || initialPromptSentRef.current) return;
+        if (!appState.initialMessage.trim()) return;
+        initialPromptSentRef.current = true;
+    
+    let message = appState.initialMessage;
+    
+    if (appState.uploadedFiles.length > 0) {
+      const fileNames = appState.uploadedFiles.map(f => f.name).join(", ");
+      message = `${appState.initialMessage}\n\n(Files uploaded: ${fileNames})`;
+    }
+    
+    agent.prompt({
+      message: message,
+      contextItems: [],
+      bounds: editor.getViewportPageBounds(),
+      modelName: agent.$modelName.get(),
+      selectedShapes: [],
+      type: 'user',
+    });
+  }, [agent, editor, appState.initialMessage, appState.uploadedFiles]);
 
   return null;
 }
