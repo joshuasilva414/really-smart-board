@@ -6,7 +6,7 @@ import {
   Tldraw,
   TldrawUiToastsProvider,
   TLUiOverrides,
-  useEditor,
+  useEditor,https://github.githubassets.com/images/spinners/octocat-spinner-128.gif
 } from "tldraw";
 import { TldrawAgent } from "./agent/TldrawAgent";
 import { useTldrawAgent } from "./agent/useTldrawAgent";
