@@ -20,7 +20,13 @@ import { TargetAreaTool } from "./tools/TargetAreaTool";
 import { TargetShapeTool } from "./tools/TargetShapeTool";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { Paperclip, ArrowUp, X, FileText, Image as ImageIcon } from "lucide-react";
+import {
+  Paperclip,
+  ArrowUp,
+  X,
+  FileText,
+  Image as ImageIcon,
+} from "lucide-react";
 
 /**
  * The ID used for this project's agent.
@@ -99,7 +105,7 @@ function App() {
     <StartScreen onStartSession={handleStartSession} />
   ) : page === "board" ? (
     <TldrawUiToastsProvider>
-      <div className="tldraw-agent-container">
+      <div className="tldraw-agent-container relative">
         <div className="tldraw-canvas">
           <Tldraw
             persistenceKey="tldraw-agent-demo"
@@ -107,10 +113,7 @@ function App() {
             overrides={overrides}
             components={components}
           >
-            <AppInner 
-              setAgent={setAgent} 
-              appState={appState}
-            />
+            <AppInner setAgent={setAgent} appState={appState} />
           </Tldraw>
         </div>
         <ErrorBoundary fallback={ChatPanelFallback}>
@@ -124,8 +127,10 @@ function App() {
 }
 
 // Start Screen Component with file upload functionality
-function StartScreen({ onStartSession }: { 
-  onStartSession: (message: string, files: File[]) => void 
+function StartScreen({
+  onStartSession,
+}: {
+  onStartSession: (message: string, files: File[]) => void;
 }) {
   const [message, setMessage] = useState("");
   const [files, setFiles] = useState<File[]>([]);
@@ -166,7 +171,8 @@ function StartScreen({ onStartSession }: {
   useEffect(() => {
     if (textareaRef.current) {
       textareaRef.current.style.height = "auto";
-      textareaRef.current.style.height = textareaRef.current.scrollHeight + "px";
+      textareaRef.current.style.height =
+        textareaRef.current.scrollHeight + "px";
     }
   }, [message]);
 
@@ -185,7 +191,8 @@ function StartScreen({ onStartSession }: {
           Welcome to <span className="text-blue-400">REALLY SMART BOARD</span>
         </h1>
         <p className="text-zinc-400 text-lg">
-          Start by describing what you want to create or upload files to get started
+          Start by describing what you want to create or upload files to get
+          started
         </p>
       </div>
 
@@ -263,13 +270,20 @@ function StartScreen({ onStartSession }: {
           <p className="mb-3 text-sm text-zinc-500">Or try a quick start:</p>
           <div className="flex flex-wrap justify-center gap-2">
             <button
-              onClick={() => onStartSession("Create a brainstorming board for a new app idea", [])}
+              onClick={() =>
+                onStartSession(
+                  "Create a brainstorming board for a new app idea",
+                  []
+                )
+              }
               className="rounded-full bg-zinc-800 px-4 py-2 text-sm text-white transition-colors hover:bg-zinc-700"
             >
               🧠 Brainstorm Board
             </button>
             <button
-              onClick={() => onStartSession("Create a project planning board", [])}
+              onClick={() =>
+                onStartSession("Create a project planning board", [])
+              }
               className="rounded-full bg-zinc-800 px-4 py-2 text-sm text-white transition-colors hover:bg-zinc-700"
             >
               📋 Project Plan
@@ -287,7 +301,11 @@ function StartScreen({ onStartSession }: {
         <div className="mt-8 text-center">
           <button
             onClick={() => {
-              if (window.confirm("Are you sure you want to delete all saved data? This cannot be undone.")) {
+              if (
+                window.confirm(
+                  "Are you sure you want to delete all saved data? This cannot be undone."
+                )
+              ) {
                 localStorage.clear();
                 window.location.reload();
               }
@@ -302,10 +320,10 @@ function StartScreen({ onStartSession }: {
   );
 }
 
-function AppInner({ 
-  setAgent, 
-  appState 
-}: { 
+function AppInner({
+  setAgent,
+  appState,
+}: {
   setAgent: (agent: TldrawAgent) => void;
   appState: AppState;
 }) {
@@ -324,23 +342,23 @@ function AppInner({
   useEffect(() => {
     // Check if we've already sent the initial prompt
     if (!agent || !editor || initialPromptSentRef.current) return;
-        if (!appState.initialMessage.trim()) return;
-        initialPromptSentRef.current = true;
-    
+    if (!appState.initialMessage.trim()) return;
+    initialPromptSentRef.current = true;
+
     let message = appState.initialMessage;
-    
+
     if (appState.uploadedFiles.length > 0) {
-      const fileNames = appState.uploadedFiles.map(f => f.name).join(", ");
+      const fileNames = appState.uploadedFiles.map((f) => f.name).join(", ");
       message = `${appState.initialMessage}\n\n(Files uploaded: ${fileNames})`;
     }
-    
+
     agent.prompt({
       message: message,
       contextItems: [],
       bounds: editor.getViewportPageBounds(),
       modelName: agent.$modelName.get(),
       selectedShapes: [],
-      type: 'user',
+      type: "user",
     });
   }, [agent, editor, appState.initialMessage, appState.uploadedFiles]);
 
