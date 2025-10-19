@@ -1,6 +1,6 @@
-# tldraw agent
+# AI Whiteboard Built using tldraw agent starter kit
 
-This starter kit demonstrates how to build an AI agent that can manipulate the [tldraw](https://github.com/tldraw/tldraw) canvas.
+The tldraw agent starter kit demonstrates how to build an AI agent that can manipulate the [tldraw](https://github.com/tldraw/tldraw) canvas.
 
 It features a chat panel on the right-hand-side of the screen where the user can communicate with the agent, add context and see chat history.
 
@@ -56,17 +56,17 @@ Aside from using the chat panel UI, you can also prompt the agent programmatical
 The simplest way to do this is by calling the `prompt()` method to start an agentic loop. The agent will continue until it has finished the task you've given it.
 
 ```ts
-const agent = useTldrawAgent(editor)
-agent.prompt('Draw a cat')
+const agent = useTldrawAgent(editor);
+agent.prompt("Draw a cat");
 ```
 
 You can optionally specify further details about the request in the form of an `AgentInput` object:
 
 ```ts
 agent.prompt({
-	message: 'Draw a cat in this area',
-	bounds: { x: 0, y: 0, w: 300, h: 400 },
-})
+  message: "Draw a cat in this area",
+  bounds: { x: 0, y: 0, w: 300, h: 400 },
+});
 ```
 
 There are more methods on the `TldrawAgent` class that can help when building an agentic app:
@@ -95,8 +95,8 @@ This example shows how to let the model see what the current time is.
 First, define a prompt part:
 
 ```ts
-interface TimePart extends BasePromptPart<'time'> {
-	time: string
+interface TimePart extends BasePromptPart<"time"> {
+  time: string;
 }
 ```
 
@@ -104,18 +104,18 @@ Then, create a prompt part util:
 
 ```ts
 export class TimePartUtil extends PromptPartUtil<TimePart> {
-	static override type = 'time' as const
+  static override type = "time" as const;
 
-	override getPart(): TimePart {
-		return {
-			type: 'time',
-			time: new Date().toLocaleTimeString(),
-		}
-	}
+  override getPart(): TimePart {
+    return {
+      type: "time",
+      time: new Date().toLocaleTimeString(),
+    };
+  }
 
-	override buildContent({ time }: TimePart) {
-		return ["The user's current time is:", time]
-	}
+  override buildContent({ time }: TimePart) {
+    return ["The user's current time is:", time];
+  }
 }
 ```
 
@@ -143,42 +143,42 @@ First, define an agent action by creating a schema for it:
 
 ```ts
 const ClearAction = z
-	// All agent actions must have a _type field
-	// The underscore encourages the model to put this field first
-	.object({
-		_type: z.literal('clear'),
-	})
-	// A title and description tell the model what the action does
-	.meta({
-		title: 'Clear',
-		description: 'The agent deletes all shapes on the canvas.',
-	})
+  // All agent actions must have a _type field
+  // The underscore encourages the model to put this field first
+  .object({
+    _type: z.literal("clear"),
+  })
+  // A title and description tell the model what the action does
+  .meta({
+    title: "Clear",
+    description: "The agent deletes all shapes on the canvas.",
+  });
 
 // Infer the action's type
-type ClearAction = z.infer<typeof ClearAction>
+type ClearAction = z.infer<typeof ClearAction>;
 ```
 
 Create an agent action util:
 
 ```ts
 export class ClearActionUtil extends AgentActionUtil<ClearAction> {
-	static override type = 'clear' as const
+  static override type = "clear" as const;
 
-	override getSchema() {
-		return ClearAction
-	}
+  override getSchema() {
+    return ClearAction;
+  }
 
-	override applyAction(action: Streaming<ClearAction>) {
-		// Don't do anything until the action has finished streaming
-		if (!action.complete) return
+  override applyAction(action: Streaming<ClearAction>) {
+    // Don't do anything until the action has finished streaming
+    if (!action.complete) return;
 
-		if (!this.agent) return
-		const { editor } = this.agent
+    if (!this.agent) return;
+    const { editor } = this.agent;
 
-		// Delete all shapes on the page
-		const shapes = editor.getCurrentPageShapes()
-		editor.deleteShapes(shapes)
-	}
+    // Delete all shapes on the page
+    const shapes = editor.getCurrentPageShapes();
+    editor.deleteShapes(shapes);
+  }
 }
 ```
 
@@ -221,7 +221,7 @@ To customize an action's appearance via CSS, you can define style for the `agent
 
 ```css
 .agent-action-type-clear {
-	color: red;
+  color: red;
 }
 ```
 
@@ -243,16 +243,16 @@ As with the `prompt` method, you can specify further details about the request.
 
 ```ts
 agent.schedule((prev) => ({
-	message: 'Add more detail in this area.',
-	bounds: { x: 0, y: 0, w: 100, h: 100 },
-}))
+  message: "Add more detail in this area.",
+  bounds: { x: 0, y: 0, w: 100, h: 100 },
+}));
 ```
 
 You can schedule multiple things by calling the `schedule` method more than once.
 
 ```ts
-agent.schedule('Add more detail to the canvas.')
-agent.schedule('Check for spelling mistakes.')
+agent.schedule("Add more detail to the canvas.");
+agent.schedule("Check for spelling mistakes.");
 ```
 
 You can also schedule further work by adding to the agent's todo list. It won't stop working until all todos are resolved.
@@ -354,22 +354,22 @@ It's a good idea to round numbers before sending them to the model. If you want 
 
 ```ts
 // In `getPart`...
-const roundedX = helpers.roundAndSaveNumber(x, 'my_key_x')
-const roundedY = helpers.roundAndSaveNumber(y, 'my_key_y')
+const roundedX = helpers.roundAndSaveNumber(x, "my_key_x");
+const roundedY = helpers.roundAndSaveNumber(y, "my_key_y");
 
 // In `applyAction`...
-const unroundedX = helpers.unroundAndRestoreNumber(x, 'my_key_x')
-const unroundedY = helpers.unroundAndRestoreNumber(y, 'my_key_y')
+const unroundedX = helpers.unroundAndRestoreNumber(x, "my_key_x");
+const unroundedY = helpers.unroundAndRestoreNumber(y, "my_key_y");
 ```
 
 To round all the numbers on a shape, use the `roundShape` and `unroundShape` methods. See the [shapes](#send-shapes-to-the-model) section below for more details on sending shapes to the model.
 
 ```ts
 // In `getPart`...
-const roundedShape = helpers.roundShape(shape)
+const roundedShape = helpers.roundShape(shape);
 
 // In `applyAction`...
-const unroundedShape = helpers.unroundShape(roundedShape)
+const unroundedShape = helpers.unroundShape(roundedShape);
 ```
 
 ## Send shapes to the model
@@ -428,16 +428,16 @@ Alternatively, you can bypass the `PromptPartUtil` system by changing the `build
 You can set an agent's model by setting its `$modelName` property.
 
 ```ts
-agent.$modelName.set('gemini-2.5-flash')
+agent.$modelName.set("gemini-2.5-flash");
 ```
 
 To override an agent's model, specify a different model name with a request.
 
 ```ts
 agent.prompt({
-	modelName: 'gemini-2.5-flash',
-	message: 'Draw a diagram of a volcano.',
-})
+  modelName: "gemini-2.5-flash",
+  message: "Draw a diagram of a volcano.",
+});
 ```
 
 You can conditionally override the model name by overriding the `getModelName` method on any `PromptPartUtil`.
@@ -482,56 +482,59 @@ To add partial support for a custom shape, let the agent create it with an [agen
 
 ```ts
 const StickerAction = z
-	.object({
-		_type: z.literal('sticker'),
-		stickerType: z.enum(['❤️', '⭐']),
-		x: z.number(),
-		y: z.number(),
-	})
-	.meta({
-		title: 'Sticker',
-		description: 'Add a sticker to the canvas.',
-	})
+  .object({
+    _type: z.literal("sticker"),
+    stickerType: z.enum(["❤️", "⭐"]),
+    x: z.number(),
+    y: z.number(),
+  })
+  .meta({
+    title: "Sticker",
+    description: "Add a sticker to the canvas.",
+  });
 
-type StickerAction = z.infer<typeof StickerAction>
+type StickerAction = z.infer<typeof StickerAction>;
 ```
 
 Define how the action gets applied to the canvas by creating an action util:
 
 ```ts
 export class StickerActionUtil extends AgentActionUtil<StickerAction> {
-	static override type = 'sticker' as const
+  static override type = "sticker" as const;
 
-	// Tell the model how to use the action
-	override getSchema() {
-		return StickerAction
-	}
+  // Tell the model how to use the action
+  override getSchema() {
+    return StickerAction;
+  }
 
-	// How to display the action in chat history
-	override getInfo(action: Streaming<StickerAction>) {
-		return {
-			icon: 'pencil' as const,
-			description: 'Added a sticker',
-		}
-	}
+  // How to display the action in chat history
+  override getInfo(action: Streaming<StickerAction>) {
+    return {
+      icon: "pencil" as const,
+      description: "Added a sticker",
+    };
+  }
 
-	// Execute the action
-	override applyAction(action: Streaming<StickerAction>, helpers: AgentHelpers) {
-		if (!action.complete) return
-		if (!this.agent) return
+  // Execute the action
+  override applyAction(
+    action: Streaming<StickerAction>,
+    helpers: AgentHelpers
+  ) {
+    if (!action.complete) return;
+    if (!this.agent) return;
 
-		// Normalize the position
-		const position = helpers.removeOffsetFromVec({ x: action.x, y: action.y })
+    // Normalize the position
+    const position = helpers.removeOffsetFromVec({ x: action.x, y: action.y });
 
-		// Create the custom shape
-		this.agent.editor.createShape({
-			type: 'sticker',
-			id: createShapeId(),
-			x: position.x,
-			y: position.y,
-			props: { stickerType: action.stickerType },
-		})
-	}
+    // Create the custom shape
+    this.agent.editor.createShape({
+      type: "sticker",
+      id: createShapeId(),
+      x: position.x,
+      y: position.y,
+      props: { stickerType: action.stickerType },
+    });
+  }
 }
 ```
 
@@ -543,23 +546,23 @@ For example, here's a schema for a custom sticker shape.
 
 ```ts
 const SimpleStickerShape = z
-	.object({
-		// Required properties
-		_type: z.literal('sticker'),
-		note: z.string(),
-		shapeId: z.string(),
+  .object({
+    // Required properties
+    _type: z.literal("sticker"),
+    note: z.string(),
+    shapeId: z.string(),
 
-		// Custom properties
-		stickerType: z.enum(['❤️', '⭐']),
-		x: z.number(),
-		y: z.number(),
-	})
-	.meta({
-		// Information about the shape to give to the agent
-		title: 'Sticker Shape',
-		description:
-			'A sticker shape is a small symbol stamped onto the canvas. There are two types of stickers: heart and star.',
-	})
+    // Custom properties
+    stickerType: z.enum(["❤️", "⭐"]),
+    x: z.number(),
+    y: z.number(),
+  })
+  .meta({
+    // Information about the shape to give to the agent
+    title: "Sticker Shape",
+    description:
+      "A sticker shape is a small symbol stamped onto the canvas. There are two types of stickers: heart and star.",
+  });
 ```
 
 The `_type` and `shapeId` properties are required so that the app can identify your shape. The `note` property is also required. The agent uses it to leave notes for itself.
@@ -570,37 +573,40 @@ Enable your custom shape schema by adding it to the list of `SIMPLE_SHAPES` in t
 
 ```ts
 const SIMPLE_SHAPES = [
-	SimpleDrawShape,
-	SimpleGeoShape,
-	SimpleLineShape,
-	SimpleTextShape,
-	SimpleArrowShape,
-	SimpleNoteShape,
-	SimpleUnknownShape,
+  SimpleDrawShape,
+  SimpleGeoShape,
+  SimpleLineShape,
+  SimpleTextShape,
+  SimpleArrowShape,
+  SimpleNoteShape,
+  SimpleUnknownShape,
 
-	// Our custom shape
-	SimpleStickerShape,
-] as const
+  // Our custom shape
+  SimpleStickerShape,
+] as const;
 ```
 
 Tell the app how to convert your custom shape into the `SimpleShape` format by adding it as a case in `convertTldrawShapeToSimpleShape.ts`.
 
 ```ts
-export function convertTldrawShapeToSimpleShape(editor: Editor, shape: TLShape): SimpleShape {
-	switch (shape.type) {
-		// ...
-		case 'sticker':
-			const bounds = getShapeBounds(shape)
-			return {
-				_type: 'sticker',
-				note: (shape.meta.note as string) ?? '',
-				shapeId: convertTldrawIdToSimpleId(shape.id),
-				stickerType: shape.props.stickerType,
-				x: bounds.x,
-				y: bounds.y,
-			}
-		// ...
-	}
+export function convertTldrawShapeToSimpleShape(
+  editor: Editor,
+  shape: TLShape
+): SimpleShape {
+  switch (shape.type) {
+    // ...
+    case "sticker":
+      const bounds = getShapeBounds(shape);
+      return {
+        _type: "sticker",
+        note: (shape.meta.note as string) ?? "",
+        shapeId: convertTldrawIdToSimpleId(shape.id),
+        stickerType: shape.props.stickerType,
+        x: bounds.x,
+        y: bounds.y,
+      };
+    // ...
+  }
 }
 ```
 
